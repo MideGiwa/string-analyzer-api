@@ -1,0 +1,1327 @@
+{
+	"info": {
+		"_postman_id": "c1f1f1f1-f1f1-f1f1-f1f1-f1f1f1f1f1f1",
+		"name": "String Analyzer API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_collection_link": "https://www.postman.com/collections/c1f1f1f1-f1f1-f1f1-f1f1-f1f1f1f1f1f1"
+	},
+	"item": [
+		{
+			"name": "Analyze String (POST /strings)",
+			"item": [
+				{
+					"name": "Success - Analyze New String 'hello world'",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"value\": \"hello world\"\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/strings",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"strings"
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201 Created\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"pm.test(\"Response has correct structure\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('id');",
+									"    pm.expect(response).to.have.property('value', 'hello world');",
+									"    pm.expect(response).to.have.property('properties');",
+									"    pm.expect(response.properties).to.have.property('length', 11);",
+									"    pm.expect(response.properties).to.have.property('is_palindrome', false);",
+									"    pm.expect(response.properties).to.have.property('word_count', 2);",
+									"    pm.expect(response.properties).to.have.property('sha256_hash');",
+									"    pm.expect(response).to.have.property('created_at');",
+									"});",
+									"const response = pm.response.json();",
+									"pm.collectionVariables.set(\"test_string_value_1\", response.value);",
+									"pm.collectionVariables.set(\"test_string_id_1\", response.id);",
+									"pm.collectionVariables.set(\"test_string_value_1_hash\", response.properties.sha256_hash);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Success - Analyze New Palindrome String 'madam'",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"value\": \"madam\"\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/strings",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"strings"
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201 Created\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"pm.test(\"Response indicates palindrome\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response.properties.is_palindrome).to.be.true;",
+									"    pm.expect(response.value).to.eql(\"madam\");",
+									"});",
+									"pm.collectionVariables.set(\"test_string_value_2\", pm.response.json().value);",
+									"pm.collectionVariables.set(\"test_string_id_2\", pm.response.json().id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Success - Analyze New String 'A man a plan a canal Panama'",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"value\": \"A man a plan a canal Panama\"\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/strings",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"strings"
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201 Created\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"pm.test(\"Response indicates palindrome (case-insensitive check)\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response.properties.is_palindrome).to.be.true;",
+									"    pm.expect(response.value).to.eql(\"A man a plan a canal Panama\");",
+									"});",
+									"pm.collectionVariables.set(\"test_string_value_3\", pm.response.json().value);",
+									"pm.collectionVariables.set(\"test_string_id_3\", pm.response.json().id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Error - Conflict (String already exists)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"value\": \"hello world\"\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/strings",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"strings"
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 409 Conflict\", function () {",
+									"    pm.response.to.have.status(409);",
+									"});",
+									"pm.test(\"Error message for conflict\", function () {",
+									"    pm.expect(pm.response.json().error).to.eql(\"String already exists in the system\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Error - Bad Request (Missing 'value' field)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"foo\": \"bar\"\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/strings",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"strings"
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400 Bad Request\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"pm.test(\"Error message for missing value\", function () {",
+									"    pm.expect(pm.response.json().error).to.eql(\"Missing 'value' field in request body\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Error - Unprocessable Entity (Invalid data type for 'value')",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"value\": 12345\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/strings",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"strings"
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422 Unprocessable Entity\", function () {",
+									"    pm.response.to.have.status(422);",
+									"});",
+									"pm.test(\"Error message for invalid value type\", function () {",
+									"    pm.expect(pm.response.json().error).to.eql(\"Invalid data type for 'value' field, expected string\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Get Specific String (GET /strings/{string_value})",
+			"item": [
+				{
+					"name": "Success - Get by original string value",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/strings/{{test_string_value_1}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"strings",
+								"{{test_string_value_1}}"
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Response matches stored string\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response.value).to.eql(pm.collectionVariables.get(\"test_string_value_1\"));",
+									"    pm.expect(response.id).to.eql(pm.collectionVariables.get(\"test_string_id_1\"));",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Success - Get by SHA-256 hash",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/strings/{{test_string_id_1}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"strings",
+								"{{test_string_id_1}}"
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Response matches stored string by hash\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response.value).to.eql(pm.collectionVariables.get(\"test_string_value_1\"));",
+									"    pm.expect(response.id).to.eql(pm.collectionVariables.get(\"test_string_id_1\"));",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Error - Not Found (Non-existent string)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/strings/nonexistentstring",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"strings",
+								"nonexistentstring"
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404 Not Found\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"pm.test(\"Error message for not found\", function () {",
+									"    pm.expect(pm.response.json().error).to.eql(\"String not found in the system\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Get All Strings with Filtering (GET /strings)",
+			"item": [
+				{
+					"name": "Success - Get all (no filters)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/strings",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"strings"
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Response contains data array and count\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('data');",
+									"    pm.expect(response.data).to.be.an('array');",
+									"    pm.expect(response).to.have.property('count');",
+									"    pm.expect(response.count).to.be.at.least(3); // Expect at least the 3 strings we added",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Success - Filter by is_palindrome=true",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/strings?is_palindrome=true",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"strings"
+							],
+							"query": [
+								{
+									"key": "is_palindrome",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"All returned strings are palindromes\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response.data).to.be.an('array');",
+									"    response.data.forEach(str => {",
+									"        pm.expect(str.properties.is_palindrome).to.be.true;",
+									"    });",
+									"    pm.expect(response.count).to.be.at.least(2); // madam, A man a plan a canal Panama",
+									"    pm.expect(response.filters_applied.is_palindrome).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Success - Filter by min_length=10",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/strings?min_length=10",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"strings"
+							],
+							"query": [
+								{
+									"key": "min_length",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"All returned strings have length >= 10\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response.data).to.be.an('array');",
+									"    response.data.forEach(str => {",
+									"        pm.expect(str.properties.length).to.be.at.least(10);",
+									"    });",
+									"    pm.expect(response.count).to.be.at.least(2); // hello world, A man a plan a canal Panama",
+									"    pm.expect(response.filters_applied.min_length).to.eql(10);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Success - Filter by word_count=2",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/strings?word_count=2",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"strings"
+							],
+							"query": [
+								{
+									"key": "word_count",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"All returned strings have word_count = 2\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response.data).to.be.an('array');",
+									"    response.data.forEach(str => {",
+									"        pm.expect(str.properties.word_count).to.eql(2);",
+									"    });",
+									"    pm.expect(response.count).to.be.at.least(1); // hello world",
+									"    pm.expect(response.filters_applied.word_count).to.eql(2);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Success - Filter by contains_character='a'",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/strings?contains_character=a",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"strings"
+							],
+							"query": [
+								{
+									"key": "contains_character",
+									"value": "a"
+								}
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"All returned strings contain 'a'\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response.data).to.be.an('array');",
+									"    response.data.forEach(str => {",
+									"        pm.expect(str.value).to.include('a');",
+									"    });",
+									"    pm.expect(response.count).to.be.at.least(2); // madam, A man a plan a canal Panama",
+									"    pm.expect(response.filters_applied.contains_character).to.eql('a');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Success - Combined filters (is_palindrome=true, word_count=1)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/strings?is_palindrome=true&word_count=1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"strings"
+							],
+							"query": [
+								{
+									"key": "is_palindrome",
+									"value": "true"
+								},
+								{
+									"key": "word_count",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"All returned strings are single-word palindromes\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response.data).to.be.an('array');",
+									"    response.data.forEach(str => {",
+									"        pm.expect(str.properties.is_palindrome).to.be.true;",
+									"        pm.expect(str.properties.word_count).to.eql(1);",
+									"    });",
+									"    pm.expect(response.count).to.eql(1); // madam",
+									"    pm.expect(response.filters_applied.is_palindrome).to.be.true;",
+									"    pm.expect(response.filters_applied.word_count).to.eql(1);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Success - No matching strings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/strings?is_palindrome=false&word_count=100",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"strings"
+							],
+							"query": [
+								{
+									"key": "is_palindrome",
+									"value": "false"
+								},
+								{
+									"key": "word_count",
+									"value": "100"
+								}
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"No data returned for no match\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response.data).to.be.an('array').and.to.be.empty;",
+									"    pm.expect(response.count).to.eql(0);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Error - Bad Request (Invalid is_palindrome type)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/strings?is_palindrome=notabool",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"strings"
+							],
+							"query": [
+								{
+									"key": "is_palindrome",
+									"value": "notabool"
+								}
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400 Bad Request\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"pm.test(\"Error message for invalid boolean\", function () {",
+									"    pm.expect(pm.response.json().error).to.eql(\"Invalid value for 'is_palindrome', must be boolean (true/false)\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Error - Bad Request (Invalid min_length type)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/strings?min_length=abc",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"strings"
+							],
+							"query": [
+								{
+									"key": "min_length",
+									"value": "abc"
+								}
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400 Bad Request\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"pm.test(\"Error message for invalid integer\", function () {",
+									"    pm.expect(pm.response.json().error).to.eql(\"Invalid value for 'min_length', must be a non-negative integer\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Error - Bad Request (contains_character not single character)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/strings?contains_character=ab",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"strings"
+							],
+							"query": [
+								{
+									"key": "contains_character",
+									"value": "ab"
+								}
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400 Bad Request\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"pm.test(\"Error message for invalid contains_character\", function () {",
+									"    pm.expect(pm.response.json().error).to.eql(\"Invalid value for 'contains_character', must be a single character\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Natural Language Filtering (GET /strings/filter-by-natural-language)",
+			"item": [
+				{
+					"name": "Success - All single word palindromic strings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/strings/filter-by-natural-language?query=all%20single%20word%20palindromic%20strings",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"strings",
+								"filter-by-natural-language"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "all single word palindromic strings"
+								}
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Response matches expected palindromes with 1 word\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response.data).to.be.an('array');",
+									"    response.data.forEach(str => {",
+									"        pm.expect(str.properties.is_palindrome).to.be.true;",
+									"        pm.expect(str.properties.word_count).to.eql(1);",
+									"    });",
+									"    pm.expect(response.count).to.eql(1); // Should only be 'madam'",
+									"    pm.expect(response.interpreted_query.parsed_filters.is_palindrome).to.be.true;",
+									"    pm.expect(response.interpreted_query.parsed_filters.word_count).to.eql(1);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Success - Strings longer than 10 characters",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/strings/filter-by-natural-language?query=strings%20longer%20than%2010%20characters",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"strings",
+								"filter-by-natural-language"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "strings longer than 10 characters"
+								}
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Response matches strings longer than 10 characters\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response.data).to.be.an('array');",
+									"    response.data.forEach(str => {",
+									"        pm.expect(str.properties.length).to.be.above(10);",
+									"    });",
+									"    pm.expect(response.count).to.be.at.least(2); // hello world (11), A man a plan a canal Panama (27)",
+									"    pm.expect(response.interpreted_query.parsed_filters.min_length).to.eql(11);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Success - Palindromic strings that contain the first vowel ('a')",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/strings/filter-by-natural-language?query=palindromic%20strings%20that%20contain%20the%20first%20vowel",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"strings",
+								"filter-by-natural-language"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "palindromic strings that contain the first vowel"
+								}
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Response matches palindromes containing 'a'\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response.data).to.be.an('array');",
+									"    response.data.forEach(str => {",
+									"        pm.expect(str.properties.is_palindrome).to.be.true;",
+									"        pm.expect(str.value.toLowerCase()).to.include('a');",
+									"    });",
+									"    pm.expect(response.count).to.be.at.least(2); // madam, A man a plan a canal Panama",
+									"    pm.expect(response.interpreted_query.parsed_filters.is_palindrome).to.be.true;",
+									"    pm.expect(response.interpreted_query.parsed_filters.contains_character).to.eql('a');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Success - Strings with exactly 5 characters",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/strings/filter-by-natural-language?query=strings%20exactly%205%20characters%20long",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"strings",
+								"filter-by-natural-language"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "strings exactly 5 characters long"
+								}
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Response matches strings with exactly 5 characters\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response.data).to.be.an('array');",
+									"    response.data.forEach(str => {",
+									"        pm.expect(str.properties.length).to.eql(5);",
+									"    });",
+									"    pm.expect(response.count).to.eql(1); // madam",
+									"    pm.expect(response.interpreted_query.parsed_filters.min_length).to.eql(5);",
+									"    pm.expect(response.interpreted_query.parsed_filters.max_length).to.eql(5);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Error - Bad Request (Missing 'query' parameter)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/strings/filter-by-natural-language",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"strings",
+								"filter-by-natural-language"
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400 Bad Request\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"pm.test(\"Error message for missing query\", function () {",
+									"    pm.expect(pm.response.json().error).to.eql(\"Missing 'query' parameter\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Error - Bad Request (Unable to parse query)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/strings/filter-by-natural-language?query=gibberish%20string%20with%20no%20filters",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"strings",
+								"filter-by-natural-language"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "gibberish string with no filters"
+								}
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400 Bad Request\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"pm.test(\"Error message for unparsable query\", function () {",
+									"    pm.expect(pm.response.json().error).to.eql(\"unable to parse natural language query into filters\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Error - Unprocessable Entity (Conflicting filters - min_length > max_length)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/strings/filter-by-natural-language?query=strings%20longer%20than%2010%20and%20shorter%20than%205",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"strings",
+								"filter-by-natural-language"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "strings longer than 10 and shorter than 5"
+								}
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422 Unprocessable Entity\", function () {",
+									"    pm.response.to.have.status(422);",
+									"});",
+									"pm.test(\"Error message for conflicting length filters\", function () {",
+									"    pm.expect(pm.response.json().error).to.eql(\"query resulted in conflicting length filters (min_length > max_length)\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Delete String (DELETE /strings/{string_value})",
+			"item": [
+				{
+					"name": "Success - Delete by original string value",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/strings/{{test_string_value_1}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"strings",
+								"{{test_string_value_1}}"
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204 No Content\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Success - Delete by SHA-256 hash",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/strings/{{test_string_id_2}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"strings",
+								"{{test_string_id_2}}"
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204 No Content\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Error - Not Found (Non-existent string after deletion)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/strings/{{test_string_id_1}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"strings",
+								"{{test_string_id_1}}"
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404 Not Found\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"pm.test(\"Error message for not found after deletion\", function () {",
+									"    pm.expect(pm.response.json().error).to.eql(\"String not found in the system\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Error - Not Found (Completely non-existent string)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/strings/reallynonexistent",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"strings",
+								"reallynonexistent"
+							]
+						}
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404 Not Found\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"pm.test(\"Error message for non-existent string\", function () {",
+									"    pm.expect(pm.response.json().error).to.eql(\"String not found in the system\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "test_string_value_1",
+			"value": ""
+		},
+		{
+			"key": "test_string_id_1",
+			"value": ""
+		},
+		{
+			"key": "test_string_value_2",
+			"value": ""
+		},
+		{
+			"key": "test_string_id_2",
+			"value": ""
+		},
+		{
+			"key": "test_string_value_3",
+			"value": ""
+		},
+		{
+			"key": "test_string_id_3",
+			"value": ""
+		}
+	]
+}
