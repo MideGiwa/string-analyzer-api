@@ -516,6 +516,34 @@ func DeleteStringHandler(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
+// HealthCheckHandler handles GET /health....
+func HealthCheckHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"status":    "healthy",
+		"service":   "String Analyzer API",
+		"timestamp": time.Now().UTC(),
+		"version":   "1.0.0",
+	})
+}
+
+// RootHandler handles GET /....
+func RootHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"message":     "Welcome to String Analyzer API",
+		"description": "A REST API for analyzing string properties including palindrome detection, character frequency, and more",
+		"version":     "1.0.0",
+		"endpoints": gin.H{
+			"POST /strings":                           "Create and analyze a new string",
+			"GET /strings":                            "Get all strings with optional filtering",
+			"GET /strings/:string_value":              "Get a specific string by value or hash",
+			"GET /strings/filter-by-natural-language": "Filter strings using natural language queries",
+			"DELETE /strings/:string_value":           "Delete a string by value or hash",
+			"GET /health":                             "Health check endpoint",
+		},
+		"documentation": "See README.md for detailed API documentation",
+	})
+}
+
 func main() {
 	router := gin.Default()
 
@@ -529,6 +557,8 @@ func main() {
 	})
 
 	// Register API endpoints....
+	router.GET("/", RootHandler)
+	router.GET("/health", HealthCheckHandler)
 	router.POST("/strings", CreateStringHandler)
 	router.GET("/strings", GetFilteredStringsHandler)
 	router.GET("/strings/:string_value", GetSpecificStringHandler)
